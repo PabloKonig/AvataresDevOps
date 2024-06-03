@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: ./frontend
+    environment:
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT=5173
+      - VITE_CLIENT_PORT=5000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    
