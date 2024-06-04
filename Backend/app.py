@@ -74,7 +74,7 @@ def avatar():
         clothing_color=clothing_color,
         **params
     ).render()
-    return flask.Response(svg, mimetype='image/svg+xml')
+    return flask.Response(svg, mimetype='image/svg+xml'), {'Access-Control-Allow-Origin':'http://localhost:5173'}
 
 
 @app.route('/api/avatar/spec')
@@ -99,9 +99,9 @@ def avatar_spec():
         values_enum = getattr(pa, part_type)
         resp['values'][part_type] = {x.name: x.value for x in values_enum}
 
-    return flask.jsonify(resp)
+    return flask.jsonify(resp), {'Access-Control-Allow-Origin':'http://localhost:5173'}
 
 
 @app.route('/ready')
 def ready():
-    return flask.Response('', status=204)
+    return flask.Response('', status=204), {'Access-Control-Allow-Origin':'http://localhost:5173'}
