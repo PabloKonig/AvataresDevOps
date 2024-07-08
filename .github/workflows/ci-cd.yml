@@ -1,57 +1,37 @@
-name: CI/CD Pipeline
+name: CI/CD Pipeline DevOps                             # Nombre del workflow
 
-on:
+on:                                                     # Define cuándo se ejecuta el workflow
   push:
     branches:
       - main
   pull_request:
     branches:
-      - main
+      - main                                            # Se ejecutará en cada push a la rama "main"
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+jobs:                                                   # Define los trabajos a ejecutar en el workflow
+  build:                                                # Nombre del primer trabajo
+    runs-on: ubuntu-latest                              # Sistema operativo para ejecutar el trabajo
 
-    services:
-      docker:
-        image: docker:19.03.12
-        options: --privileged
-        ports:
-          - 2375:2375
-        env:
-          DOCKER_TLS_CERTDIR: ""
+    steps:                                              # Pasos a ejecutar dentro del trabajo
+      - name: Clonar Repo                               # Nombre del paso
+        uses: actions/checkout@v4                       # Acción predefinida para clonar el repositorio
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Login a Docker Hub                        # Inicia sesión en Docker Hub
+        uses: docker/login-action@v1                    # Acción para autenticarse en Docker Hub
+        with:                                           # Parámetros para la acción
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}  # Usuario de Docker Hub (secreto)
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}  # Contraseña de Docker Hub (secreto)
 
-      - name: Docker Build
-        uses: docker/setup-buildx-action@v1
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
+      - name: Build and push imagen BackEnd             # Construye y sube la imagen del backend
+        uses: docker/build-push-action@v2               # Acción para construir y subir imágenes Docker
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          context: ./Backend                            # Directorio con el Dockerfile del backend
+          push: true                                    # Habilita la subida a Docker Hub
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/avatares-backend:latest # Nombre de la imagen en Docker Hub
 
-      - name: Build and push backend
-        uses: docker/build-push-action@v2
+      - name: Build and push frontend image             # Construye y sube la imagen del frontend
+        uses: docker/build-push-action@v2               # Acción para construir y subir imágenes Docker
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/avatares-backend:V1.0.0
-
-      - name: Build and push frontend
-        uses: docker/build-push-action@v2
-        with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/avatares-frontend:V1.0.0
-
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f k8s/
-        env:
-          KUBECONFIG: ${{ secrets.KUBECONFIG }}
+          context: ./Frontend                           # Directorio con el Dockerfile del frontend
+          push: true                                    # Habilita la subida a Docker Hub
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/avatares-frontend:latest # Nombre de la imagen en Docker Hub
