@@ -25,7 +25,7 @@ jobs:                                                           # Define los tra
       - name: Install Backend Dependencies
         run: cd Backend && pip install -r requirements.txt
       - name: Run Tests
-        run:  # Comandos para ejecutar pruebas del backend
+        run:  echo "Para futuras pruebas" # Comandos para ejecutar pruebas del backend
    
       - name: Run tests FrontEnd
         run: |
