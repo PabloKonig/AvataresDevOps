@@ -16,10 +16,14 @@ jobs:                                                           # Define los tra
       - name: Clonar Repo                                       # Nombre del paso
         uses: actions/checkout@v4                               # Acción predefinida para clonar el repositorio
         
+      - name: Print GITHUB_REF
+        run: 
+          echo "GITHUB_REF : $GITHUB_REF"
+        
       - name: Definir version
         if: startsWith(github.ref, 'refs/tags/')                # Se Establece la variable desde el tag para versionar las imágenes de Docker Hub.
         run: |
-          echo "v1.0.0" >> $GITHUB_ENV
+          echo "v1.0.1" >> $GITHUB_ENV
           # echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV    
 
       - name: Login a Docker Hub                                # Inicia sesión en Docker Hub
