@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test": "echo \"No hay pruebas configuradas\""
   },
   "dependencies": {
     "fg-select-css": "^3.2.0",
