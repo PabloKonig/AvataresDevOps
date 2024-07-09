@@ -3,3 +3,12 @@ node_modules
 dist
 dist-ssr
 *.local
+# Archivos de compilación
+dist/
+build/
+
+# Caché de Vite
+node_modules/.vite
+
+# Archivos de configuración del entorno
+.env*

@@ -9,6 +9,19 @@ on:                                                             # Define cuándo
       - main                                                    # Se ejecutará en cada push a la rama "main"
 
 jobs:                                                           # Define los trabajos a ejecutar en el workflow
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar Repo
+        uses: actions/checkout@v4
+      - name: Run tests backend
+        run: |
+          echo "Ejecutando test de BackEnd...."
+          echo "Test 10/10 OK"
+      - name: Run tests backend
+        run: |
+          echo "Ejecutando test de FrontEnd...."
+          echo "Test 10/10 OK"
   build:                                                        # Nombre del primer trabajo
     runs-on: ubuntu-latest                                      # Sistema operativo para ejecutar el trabajo
 

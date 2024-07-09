@@ -15,7 +15,7 @@ provider "aws" {
 
 resource "aws_security_group" "permitir_http_ssh" {
   name = "permitir_http_ssh"
-  description = "Permite el tráfico HTTP y SSH"
+  description = "Permite el trafico HTTP y SSH"
 
   ingress {
     from_port = 22
@@ -42,10 +42,10 @@ resource "aws_security_group" "permitir_http_ssh" {
 # Crear una instancia EC2 para Minikube
 
 resource "aws_instance" "minikube_instance" {
-  ami           = "ami-0c55b31ad2299a701"           #AMI de Ubuntu 20.04 para us-east-1
+  ami           = "ami-04a81a99f5ec58529"           #AMI de Ubuntu 20.04 LTS para us-east-1
   instance_type = "t2.micro" 
-  key_name      = "tu_clave_ssh"  # Clave SSH usada en el proyecto.
-  vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
+  key_name      = "avatares"  # Clave SSH usada en el proyecto.
+  vpc_security_group_ids = [aws_security_group.permitir_http_ssh.id]
 
   tags = {
     Name = "minikube-instance"

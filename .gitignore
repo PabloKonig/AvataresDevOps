@@ -1,0 +1,26 @@
+# Archivos generales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno virtual de Python
+venv/
+.venv/
+env/
+.env/
+
+# Archivos de compilación
+dist/
+build/
+
+# Caché de paquetes
+node_modules/
+.terraform/
+
+# Archivos específicos de IDE
+.idea/
+.vscode/
+
+# Ignorar archivos de configuración específicos para cada subproyecto
+Backend/.gitignore
+Frontend/.gitignore
+Infraestructura/Terraform/.gitignore

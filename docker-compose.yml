@@ -1,9 +1,9 @@
-version: "3.8"
+version: '3.8'
 name: avatares
 
 services:
   backend:
-    build: ./backend
+    image: pablokonig/avatares-backend:v0.0.1
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
@@ -11,7 +11,7 @@ services:
       - "5000:5000"
 
   frontend:
-    build: ./frontend
+    image: pablokonig/avatares-frontend:v0.0.1
     environment:
       - VITE_HOST=0.0.0.0
       - VITE_PORT=5173
