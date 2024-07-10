@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avatares-frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: avatares-frontend
+  template:
+    metadata:
+      labels:
+        app: avatares-frontend
+    spec:
+      containers:
+      - name: avatares-frontend
+        image: pablokonig/frontend:v0.0.1
+        ports:
+        - containerPort: 5173                             # Puerto del frontend
+        env:
+        - name: VITE_HOST
+          value: "0.0.0.0"
+        - name: VITE_PORT
+          value: "5173"

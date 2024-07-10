@@ -25,7 +25,7 @@ jobs:                                                           # Define los tra
       - name: Install Backend Dependencies
         run: cd Backend && pip install -r requirements.txt
       - name: Run Tests
-        run:  echo "Para futuras pruebas" # Comandos para ejecutar pruebas del backend
+        run:  echo "Para futuras pruebas"                       # Comandos para ejecutar pruebas del backend
    
       - name: Run tests FrontEnd
         run: |
@@ -69,3 +69,27 @@ jobs:                                                           # Define los tra
           context: ./Frontend                                   # Directorio con el Dockerfile del frontend
           push: true                                            # Habilita la subida a Docker Hub
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/avatares-frontend:${{ env.VERSION }}   # Nombre de la imagen en Docker Hub
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Setup SSH Connection to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }} 
+          username: ubuntu 
+          key: ${{ secrets.EC2_PRIVATE_KEY }} 
+      - name: Deploy to Minikube
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            minikube update-context
+            # Aplicar manifiestos de la aplicación (desde la carpeta Infraestructura/kubernetes)
+            kubectl apply -f Infraestructura/kubernetes/backend-deployment.yaml
+            kubectl apply -f Infraestructura/kubernetes/backend-service.yaml
+            kubectl apply -f Infraestructura/kubernetes/frontend-deployment.yaml
+            kubectl apply -f Infraestructura/kubernetes/frontend-service.yaml
