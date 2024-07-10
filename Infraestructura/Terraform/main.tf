@@ -43,11 +43,35 @@ resource "aws_security_group" "permitir_http_ssh" {
 
 resource "aws_instance" "minikube_instance" {
   ami           = "ami-04a81a99f5ec58529"           #AMI de Ubuntu 20.04 LTS para us-east-1
-  instance_type = "t2.micro" 
+  instance_type = "t3.medium" 
   key_name      = "avatares"  # Clave SSH usada en el proyecto.
   vpc_security_group_ids = [aws_security_group.permitir_http_ssh.id]
-
+  
   tags = {
     Name = "minikube-instance"
   }
+  
+  provisioner "local-exec" {
+    command = "echo \"La IP pública de la instancia es: ${aws_instance.minikube_instance.public_ip}\""
+  }
+
+  user_data = <<-EOF
+#!/bin/bash
+  sudo apt update
+  curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+  chmod +x minikube-linux-amd64
+  sudo mv minikube-linux-amd64 /usr/local/bin/minikube
+
+  # Instalar Docker
+  sudo apt install -y docker.io
+  sudo systemctl start docker
+  sudo systemctl enable docker 
+  
+  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  chmod +x kubectl
+  sudo mv ./kubectl /usr/local/bin/kubectl
+  sudo usermod -aG docker $USER && newgrp docker
+  sudo minikube start --driver=docker --force
+
+EOF
 }
