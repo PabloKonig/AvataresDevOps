@@ -30,6 +30,9 @@ jobs:                                                           # Define los tra
   test-frontend:
     runs-on: ubuntu-latest
     steps:   
+      - name: Clonar Repo
+        uses: actions/checkout@v4
+        
       - name: Run tests FrontEnd
         run: |
           echo "Ejecutando test de FrontEnd...."
@@ -81,7 +84,8 @@ jobs:                                                           # Define los tra
         uses: docker/login-action@v3                            # Acción para autenticarse en Docker Hub
         with:                                                   # Parámetros para la acción
           username: ${{ secrets.DOCKER_HUB_USERNAME }}          # Usuario de Docker Hub (secreto)
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }} 
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
       - name: Build and push frontend image                     # Construye y sube la imagen del frontend
         uses: docker/build-push-action@v6                       # Acción para construir y subir imágenes Docker
         with:
