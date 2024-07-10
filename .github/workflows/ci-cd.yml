@@ -9,7 +9,7 @@ on:                                                             # Define cuándo
       - main                                                    # Se ejecutará en cada push a la rama "main"
 
 jobs:                                                           # Define los trabajos a ejecutar en el workflow
-  test:
+  test-backend:
     runs-on: ubuntu-latest
     steps:
       - name: Clonar Repo
@@ -25,8 +25,11 @@ jobs:                                                           # Define los tra
       - name: Install Backend Dependencies
         run: cd Backend && pip install -r requirements.txt
       - name: Run Tests
-        run:  echo "Para futuras pruebas"                       # Comandos para ejecutar pruebas del backend
-   
+        run:  echo "Para futuras pruebas" 
+                              # Comandos para ejecutar pruebas del backend
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:   
       - name: Run tests FrontEnd
         run: |
           echo "Ejecutando test de FrontEnd...."
@@ -39,9 +42,9 @@ jobs:                                                           # Define los tra
       - name: Run Frontend Tests
         run: cd Frontend && npm run test
 
-  build:                                                      # Nombre del primer trabajo
+  build-backend:                                                      # Nombre del primer trabajo
     runs-on: ubuntu-latest                                      # Sistema operativo para ejecutar el trabajo
-    needs: test
+    needs: test-backend
     steps:                                                      # Pasos a ejecutar dentro del trabajo
       - name: Clonar Repo                                       # Nombre del paso
         uses: actions/checkout@v4                               # Acción predefinida para clonar el repositorio
@@ -63,6 +66,22 @@ jobs:                                                           # Define los tra
           push: true                                            # Habilita la subida a Docker Hub
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/avatares-backend:${{ env.VERSION }}  # Nombre de la imagen en Docker Hub
 
+  build-frontend:                                                      # Nombre del primer trabajo
+    runs-on: ubuntu-latest                                      # Sistema operativo para ejecutar el trabajo
+    needs: test-frontend
+    steps:                                                      # Pasos a ejecutar dentro del trabajo
+      - name: Clonar Repo                                       # Nombre del paso
+        uses: actions/checkout@v4                               # Acción predefinida para clonar el repositorio
+        
+      - name: Read version from file
+        run: |
+          echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV      # Toma del archivo version.txt la versión para las imagenes a subir a Docker Hub.
+
+      - name: Login a Docker Hub                                # Inicia sesión en Docker Hub
+        uses: docker/login-action@v3                            # Acción para autenticarse en Docker Hub
+        with:                                                   # Parámetros para la acción
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}          # Usuario de Docker Hub (secreto)
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }} 
       - name: Build and push frontend image                     # Construye y sube la imagen del frontend
         uses: docker/build-push-action@v6                       # Acción para construir y subir imágenes Docker
         with:
@@ -72,7 +91,7 @@ jobs:                                                           # Define los tra
 
   deploy:
     runs-on: ubuntu-latest
-    needs: [test, build]
+    needs: [build-backend, build-frontend]
     steps:
       - name: Setup SSH Connection to EC2
         uses: appleboy/ssh-action@master
@@ -92,5 +111,5 @@ jobs:                                                           # Define los tra
             git clone https://github.com/PabloKonig/AvataresDevOps.git
             # Aplicar manifiestos de la aplicación (desde la carpeta Infraestructura/kubernetes)
             cd ./AvataresDevOps/Infraestructura/kubernetes
-            kubectl apply -f .
+            sudo kubectl apply -f .
           
