@@ -72,7 +72,7 @@ jobs:                                                           # Define los tra
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test
+    needs: [test, build]
     steps:
       - name: Setup SSH Connection to EC2
         uses: appleboy/ssh-action@master
