@@ -89,6 +89,6 @@ jobs:                                                           # Define los tra
           script: |
             git clone https://github.com/PabloKonig/AvataresDevOps.git
             # Aplicar manifiestos de la aplicación (desde la carpeta Infraestructura/kubernetes)
-            cd /Infraestructura/kubernetes
+            cd ./AvataresDevOps/Infraestructura/kubernetes
             kubectl apply -f .
           
