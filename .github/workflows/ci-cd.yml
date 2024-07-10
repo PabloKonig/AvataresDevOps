@@ -39,9 +39,9 @@ jobs:                                                           # Define los tra
       - name: Run Frontend Tests
         run: cd Frontend && npm run test
 
-  build:                                                        # Nombre del primer trabajo
+  build:                                                      # Nombre del primer trabajo
     runs-on: ubuntu-latest                                      # Sistema operativo para ejecutar el trabajo
-
+    needs: test
     steps:                                                      # Pasos a ejecutar dentro del trabajo
       - name: Clonar Repo                                       # Nombre del paso
         uses: actions/checkout@v4                               # Acción predefinida para clonar el repositorio
@@ -87,9 +87,8 @@ jobs:                                                           # Define los tra
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            minikube update-context
+            git clone https://github.com/pablokonig/avatares-devops.git
             # Aplicar manifiestos de la aplicación (desde la carpeta Infraestructura/kubernetes)
-            kubectl apply -f Infraestructura/kubernetes/backend-deployment.yaml
-            kubectl apply -f Infraestructura/kubernetes/backend-service.yaml
-            kubectl apply -f Infraestructura/kubernetes/frontend-deployment.yaml
-            kubectl apply -f Infraestructura/kubernetes/frontend-service.yaml
+            cd /Infraestructura/kubernetes
+            kubectl apply -f .
+          
