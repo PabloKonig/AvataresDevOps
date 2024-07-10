@@ -87,7 +87,7 @@ jobs:                                                           # Define los tra
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            git clone https://github.com/pablokonig/avatares-devops.git
+            git clone https://github.com/PabloKonig/AvataresDevOps.git
             # Aplicar manifiestos de la aplicación (desde la carpeta Infraestructura/kubernetes)
             cd /Infraestructura/kubernetes
             kubectl apply -f .
